@@ -1,0 +1,33 @@
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: nyc-taxi-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ny_taxi_db
+    ports:
+      - "5432:5432" # Host:Container port mapping
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - /home/iamomowale/datawarehouse/data:/data_pipeline_files
+ 
+  pgadmin:
+    image: dpage/pgadmin4:8.4
+    container_name: nyc-taxi-pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@pgadmin.com
+      PGADMIN_DEFAULT_PASSWORD: mypassword
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  postgres_data:
+  pgadmin_data:
