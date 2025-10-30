@@ -4,3 +4,4 @@ pgadmin_data/
 data/
 sql/
 *.csv
+full_load/
