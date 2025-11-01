@@ -2,3 +2,4 @@
 pg_data/
 pgadmin_data/
 *.csv
+data/
