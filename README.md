@@ -31,6 +31,8 @@ This pipeline follows the Medallion Architecture pattern to ensure clear data li
 🥇 Gold → Aggregated, analytics-ready metrics
 ```
 
+![Alt text](/images/flow.drawio.png)
+
 Each layer represents a transformation stage:
 
 | Layer      | Purpose                    | Key Processes                                              |
