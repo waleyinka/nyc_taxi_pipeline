@@ -57,6 +57,7 @@ yellow_tripdata_2024-02.csv
 yellow_tripdata_2024-12.csv
 ```
 
+
 **Step 2: Ingestion (Bronze Layer)**
 
 All ingestion is handled through a single stored procedure —
@@ -74,18 +75,17 @@ Key Features:
 
  - Supports re-runs without duplicates (idempotent)
 
-Procedure Signature:
-
 ``` SQL
 
 CALL public.load_bronze_data_incremental(
-    'yellow_tripdata_2024-03.csv',
+'yellow_tripdata_2024-03.csv',
     '/data/yellow_tripdata_2024-03.csv'
 );
 
 ```
 
-Core Logic:
+
+Logic:
 
 | Parameter     | Description                                                                        |
 | ------------- | ---------------------------------------------------------------------------------- |
@@ -94,6 +94,7 @@ Core Logic:
 | `p_force`     | Optional mode selector: `TRUE` = FULL, `FALSE` = INCREMENTAL, `NULL` = Auto-detect |
 
 The procedure intelligently decides whether to perform a FULL or INCREMENTAL load based on the last successful run and the presence of a watermark.
+
 
 **Step 2: Transformation (Silver Layer)**
 
@@ -118,6 +119,7 @@ WHERE passenger_count > 0
   AND EXTRACT(YEAR FROM tpep_pickup_datetime) = 2024;
 
 ```
+
 
 Unit checks run after transformation to ensure:
 
@@ -145,7 +147,6 @@ The Gold layer delivers analytical summaries. This stage aggregates cleaned data
 Example:
 
 ``` SQL
-
 CREATE TABLE gold.yellow_taxi_metrics AS
 SELECT
     DATE_TRUNC('month', pickup_datetime) AS month,
@@ -155,8 +156,8 @@ SELECT
 FROM silver.yellow_taxi_2024
 GROUP BY month
 ORDER BY month;
-
 ```
+
 
 ## Metadata Management
 
@@ -173,15 +174,15 @@ The metadata table (`public.load_metadata`) acts as the pipeline’s “memory.�
 | `last_watermark` | TIMESTAMP | Highest drop-off timestamp from the last run        |
 | `remarks`        | TEXT      | Error details (if any)                              |
 
+
 **Example Query:**
 
 ``` SQL
-
 SELECT * FROM public.load_metadata
 WHERE layer = 'bronze'
 ORDER BY end_time DESC;
-
 ```
+
 
 **Example Output:**
 
@@ -216,3 +217,12 @@ nyc-taxi-pipeline/
 └── requirements.txt      # Python dependencies
 
 
+## Future Enhancements
+
+ - Containerize with Docker Compose (PostgreSQL + pgAdmin)
+
+ - Add dbt or Airflow orchestration layer
+
+ - Extend Silver and Gold to handle multi-year datasets
+
+ - Implement email/Slack alerts for failed loads
